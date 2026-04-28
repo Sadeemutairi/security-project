@@ -56,10 +56,16 @@ def login():
         password = request.form["password"]
 
         conn = get_db()
-        user = conn.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
-        ).fetchone()
+        
+        #Vulnerable code:
+        query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+        user = conn.execute(query).fetchone()
+        
+        #Secure code:
+        #user = conn.execute(
+            #"SELECT * FROM users WHERE username=? AND password=?",
+           # (username, password)
+        #).fetchone()
         conn.close()
 
         if user:
