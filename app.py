@@ -4,6 +4,10 @@ import bcrypt
 
 app = Flask(__name__)
 app.secret_key = "key123"
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+# Use True only when running with HTTPS
+app.config["SESSION_COOKIE_SECURE"] = False
 
 # Connect to database
 def get_db():
@@ -22,6 +26,14 @@ def init_db():
             role TEXT DEFAULT 'user'
         )
     """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -126,7 +138,43 @@ def dashboard():
         (session["username"],)
     ).fetchone()
     return render_template("dashboard.html", user=user)
+@app.route("/comments", methods=["GET", "POST"])
+def comments():
+    if "username" not in session:
+        return redirect("/login")
 
+    if request.method == "POST":
+        comment = request.form["comment"]
+
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO comments (text) VALUES (?)",
+            (comment,)
+        )
+        conn.commit()
+        conn.close()
+
+    conn = get_db()
+    comments = conn.execute("SELECT * FROM comments").fetchall()
+    conn.close()
+
+    return render_template("comments.html", comments=comments)
+@app.route("/admin")
+def admin():
+    if "username" not in session:
+        return redirect("/login")
+
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE username=?",
+        (session["username"],)
+    ).fetchone()
+    conn.close()
+
+    if user["role"] != "admin":
+        return "Access denied. Admins only."
+
+    return render_template("admin.html")
 # Logout
 @app.route("/logout")
 def logout():
