@@ -1,19 +1,35 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import bcrypt
+import os
 
 app = Flask(__name__)
-app.secret_key = "key123"
+
+# -------- BEFORE (Vulnerable) --------
+# A weak and hardcoded secret key was used
+# Session cookies were not securely configured
+
+# app.secret_key = "key123"
+
+
+# -------- AFTER (Fixed) --------
+# A strong random secret key is used
+# Session cookies are configured with secure settings
+
+app.secret_key = os.urandom(24)
+
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 # Use True only when running with HTTPS
 app.config["SESSION_COOKIE_SECURE"] = False
+
 
 # Connect to database
 def get_db():
     conn = sqlite3.connect("users.db")
     conn.row_factory = sqlite3.Row
     return conn
+
 
 # Initialize database
 def init_db():
@@ -37,17 +53,19 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 # Home → redirect to login
 @app.route("/")
 def home():
     return redirect("/login")
+
 
 # Register
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form["username"]
-        
+
         # Weak Password Storage (before fix):
         # Passwords were stored in plain text without encryption
         # password = request.form["password"]
@@ -57,17 +75,16 @@ def register():
         password = request.form["password"].encode('utf-8')
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
-
         conn = get_db()
         conn.execute(
-           "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
             (username, hashed_password, "user")
         )
 
-        #conn.execute(
-            #"INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-            #(username, password, "user")
-        #)
+        # conn.execute(
+        # "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+        # (username, password, "user")
+        # )
 
         conn.commit()
         conn.close()
@@ -85,24 +102,23 @@ def login():
         password = request.form["password"]
 
         conn = get_db()
-        
+
         # ------------- SQL Injection Vulnerable code: -------------
         # SQL Injection input Username: ' OR 1=1 --
         # This input makes the condition always true
         # The attacker can login without knowing the password
 
-        #query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
-        #print("QUERY:", query)
-        #user = conn.execute(query).fetchone()
+        # query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+        # print("QUERY:", query)
+        # user = conn.execute(query).fetchone()
 
         # ------------- End SQL Injection Vulnerable code -------------
-        
-        #user = conn.execute(
-            #"SELECT * FROM users WHERE username=? AND password=?",
-            #(username, password)
 
-        
-        # ------------- SQL Injection Secure code: -------------  
+        # user = conn.execute(
+        # "SELECT * FROM users WHERE username=? AND password=?",
+        # (username, password)
+
+        # ------------- SQL Injection Secure code: -------------
         # Previously, the query checked both username and password in SQL
         # The system retrieves the user by username only
         user = conn.execute(
@@ -110,8 +126,6 @@ def login():
             (username,)
         ).fetchone()
         conn.close()
-
-
 
         # Secure Password Verification
         # Instead of checking the password in SQL
@@ -138,6 +152,16 @@ def dashboard():
         (session["username"],)
     ).fetchone()
     return render_template("dashboard.html", user=user)
+
+
+# -------- BEFORE (Vulnerable) --------
+# User input is stored and displayed without sanitization.
+# If the template uses the 'safe' filter, it allows execution of malicious scripts.
+# Example attack: <script>alert('XSS')</script>
+
+# -------- AFTER (Fixed) --------
+# Input is rendered safely using Jinja2 default escaping.
+# The 'safe' filter is removed from the template to prevent script execution.
 @app.route("/comments", methods=["GET", "POST"])
 def comments():
     if "username" not in session:
@@ -159,6 +183,8 @@ def comments():
     conn.close()
 
     return render_template("comments.html", comments=comments)
+
+
 @app.route("/admin")
 def admin():
     if "username" not in session:
@@ -176,10 +202,13 @@ def admin():
 
     return render_template("admin.html")
 # Logout
+
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
+
 
 # Run app
 if __name__ == "__main__":
