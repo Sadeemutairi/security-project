@@ -22,4 +22,4 @@ Weak Password Storage Test:
 1. Register a new user.
 2. Open users.db using the SQLite extension in VS Code.
 3. Check the password column.
-4. The password should appear as a bcrypt hash starting with $2b$, not as plain text.
+4. The password should appear as a bcrypt hash not as plain text.
