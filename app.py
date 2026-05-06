@@ -66,25 +66,23 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
 
-        # Weak Password Storage (before fix):
+        # ------------- 2. Weak Password Storage (hashing) -------------
+        
+        # ------------- Weak Password Storage (BEFORE fix): -------------
         # Passwords were stored in plain text without encryption
         # password = request.form["password"]
 
-        # Secure Password Storage (after fix):
+        
+        # ------------- Secure Password Storage code (AFTER fix): -------------
         # Passwords are hashed using bcrypt
         password = request.form["password"].encode('utf-8')
-        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        hashed_password = bcrypt.hashpw(password, bcrypt.gensalt()) 
 
         conn = get_db()
         conn.execute(
             "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
             (username, hashed_password, "user")
         )
-
-        # conn.execute(
-        # "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-        # (username, password, "user")
-        # )
 
         conn.commit()
         conn.close()
@@ -103,7 +101,9 @@ def login():
 
         conn = get_db()
 
-        # ------------- SQL Injection Vulnerable code: -------------
+        # ------------- 1. SQL Injection -------------
+
+        # ------------- SQL Injection Vulnerable code (BEFORE fix):-------------
         # SQL Injection input Username: ' OR 1=1 --
         # This input makes the condition always true
         # The attacker can login without knowing the password
@@ -112,14 +112,8 @@ def login():
         # print("QUERY:", query)
         # user = conn.execute(query).fetchone()
 
-        # ------------- End SQL Injection Vulnerable code -------------
-
-        # user = conn.execute(
-        # "SELECT * FROM users WHERE username=? AND password=?",
-        # (username, password)
-
-        # ------------- SQL Injection Secure code: -------------
-        # Previously, the query checked both username and password in SQL
+        # ------------- SQL Injection Secure code (AFTER fix): -------------
+        # Parameterized queries are used to prevent SQL Injection
         # The system retrieves the user by username only
         user = conn.execute(
             "SELECT * FROM users WHERE username=?",
@@ -127,10 +121,11 @@ def login():
         ).fetchone()
         conn.close()
 
-        # Secure Password Verification
+
+        # ------------- Secure Password Verification -------------
         # Instead of checking the password in SQL
         # The entered password is compared with the stored hashed password
-        if user and bcrypt.checkpw(password.encode('utf-8'), user["password"]):
+        if user and bcrypt.checkpw(password.encode('utf-8'), user["password"]): # compare the entered password with the hashed one stored in DB
             session["username"] = user["username"]
             return redirect("/dashboard")
         else:
@@ -152,16 +147,18 @@ def dashboard():
         (session["username"],)
     ).fetchone()
     return render_template("dashboard.html", user=user)
+    
 
+# ------------- 3. Cross-Site Scripting (XSS)-------------
 
-# -------- BEFORE (Vulnerable) --------
+# ------------- XSS  Vulnerable code (BEFORE fix): -------------
 # User input is stored and displayed without sanitization.
-# If the template uses the 'safe' filter, it allows execution of malicious scripts.
+# If the template uses the 'safe' filter, it allows execution of malicious scripts
 # Example attack: <script>alert('XSS')</script>
 
-# -------- AFTER (Fixed) --------
-# Input is rendered safely using Jinja2 default escaping.
-# The 'safe' filter is removed from the template to prevent script execution.
+# ------------- XSS  Vulnerable code (AFTER fix): -------------
+# Input is rendered safely using Jinja2 default escaping
+# The 'safe' filter is removed from the template to prevent script execution
 @app.route("/comments", methods=["GET", "POST"])
 def comments():
     if "username" not in session:
