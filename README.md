@@ -6,8 +6,8 @@ Flask-based web application designed to demonstrate the detection and mitigation
    pip install flask bcrypt
 3. Run the application:
    python app.py
-4. Open the browser and go to:
-   http://127.0.0.1:5000
+4. Open the browser and go to the provided link
+   
 5. Register a new user, then log in to access the dashboard.
 
 
