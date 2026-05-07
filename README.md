@@ -99,3 +99,173 @@ Open the project folder using Visual Studio Code.
 Run the following command in the terminal:
 ```bash
 pip install flask bcrypt
+
+## 3. Run the Application
+
+```bash
+python app.py
+```
+
+---
+
+## 4. Open the Application
+
+Open the browser and go to:
+
+```text
+http://127.0.0.1:5000
+```
+
+---
+
+# Application Pages
+
+| Page | Description |
+|---|---|
+| `/register` | Create a new account |
+| `/login` | User login page |
+| `/dashboard` | User dashboard |
+| `/comments` | Comments page for XSS testing |
+| `/admin` | Protected admin page |
+
+---
+
+# Security Features Implemented
+
+| Security Feature | Description |
+|---|---|
+| SQL Injection Prevention | Prevents malicious SQL manipulation using parameterized queries |
+| bcrypt Password Hashing | Protects passwords by storing hashed values |
+| XSS Protection | Prevents JavaScript execution from user input |
+| RBAC | Restricts admin page access to authorized users only |
+| Session Security | Protects session cookies and login sessions |
+
+---
+
+# Security Testing Instructions
+
+Each vulnerability can be tested in both the vulnerable and secure versions.
+
+---
+
+# 1. SQL Injection Test
+
+## Vulnerable Input
+
+Username:
+```text
+' OR 1=1 --
+```
+
+Password:
+```text
+anything
+```
+
+## Expected Result in Vulnerable Version
+The login may succeed without knowing the correct password.
+
+## Expected Result in Secure Version
+The login fails because parameterized queries are used.
+
+---
+
+# 2. Weak Password Storage Test
+
+1. Register a new user.
+2. Open `users.db` using the SQLite extension in VS Code.
+3. Check the password column.
+
+## Expected Result in Vulnerable Version
+Passwords may appear as plain text.
+
+## Expected Result in Secure Version
+Passwords appear as bcrypt hashes starting with:
+
+```text
+$2b$
+```
+
+---
+
+# 3. XSS Test
+
+## Test Input
+
+```html
+<script>alert('XSS')</script>
+```
+
+## Steps
+1. Login to the application.
+2. Open the comments page.
+3. Submit the payload above.
+
+## Expected Result in Vulnerable Version
+A popup alert appears because the script executes.
+
+## Expected Result in Secure Version
+The script is displayed as plain text and does not execute.
+
+---
+
+# 4. Access Control Test
+
+## Steps
+1. Login using a normal user account.
+2. Open:
+
+```text
+/admin
+```
+
+## Expected Result in Vulnerable Version
+Unauthorized users may access the admin page.
+
+## Expected Result in Secure Version
+The system displays:
+
+```text
+Access denied. Admins only.
+```
+
+---
+
+# Challenges Faced
+
+- Understanding secure password hashing using bcrypt
+- Preventing SQL Injection using parameterized queries
+- Implementing XSS protection using Jinja2 escaping
+- Restricting unauthorized access using RBAC
+- Testing vulnerable and secure versions separately
+
+---
+
+# Future Improvements
+
+- Enable HTTPS in deployment environments
+- Improve password complexity validation
+- Add logging and monitoring features
+- Implement multi-factor authentication (MFA)
+
+---
+
+# Resources
+
+- Flask Documentation  
+  https://flask.palletsprojects.com/
+
+- Bootstrap Documentation  
+  https://getbootstrap.com/
+
+- bcrypt Documentation  
+  https://pypi.org/project/bcrypt/
+
+- SQLite Documentation  
+  https://www.sqlite.org/
+
+---
+
+# GitHub Repository
+
+........
