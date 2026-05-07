@@ -97,8 +97,12 @@ Open the project folder using Visual Studio Code.
 ## 2. Install Required Libraries
 
 Run the following command in the terminal:
+
 ```bash
 pip install flask bcrypt
+```
+
+---
 
 ## 3. Run the Application
 
