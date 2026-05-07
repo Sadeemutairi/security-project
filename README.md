@@ -1,25 +1,101 @@
-# Secure Web Application - Detection and Mitigation of Vulnerabilities
-Flask-based web application designed to demonstrate the detection and mitigation of common security vulnerabilities. The application includes a user management system with registration, login, and a dashboard, along with a secure comment system.
-# Steps to run the Application:
-1. Open the project folder in VS Code.
-2. Install the required libraries:
-   pip install flask bcrypt
-3. Run the application:
-   python app.py
-4. Open the browser and go to the provided link
-   
-5. Register a new user, then log in to access the dashboard.
-# Instructions to test security features:
-SQL Injection Test:
-1. Go to the login page.
-2. In the vulnerable version, enter:
-   Username: ' OR 1=1 --
-   Password: anything
-3. This should allow login without knowing the password.
-4. In the fixed version, the same input should fail because parameterized queries are used.
+# Building a Secure Web Application
+## Detection and Mitigation of Security Vulnerabilities
 
-Weak Password Storage Test:
-1. Register a new user.
-2. Open users.db using the SQLite extension in VS Code.
-3. Check the password column.
-4. The password should appear as a bcrypt hash not as plain text.
+This project is a Flask-based web application developed for the CSC429 course project. The objective of the project is to demonstrate common web security vulnerabilities and how they can be mitigated using secure coding practices.
+
+The application includes two versions:
+
+1. Vulnerable Version  
+   Demonstrates common web vulnerabilities for testing and educational purposes.
+
+2. Secure Version  
+   Implements security mechanisms to mitigate vulnerabilities and protect the application.
+
+The application includes:
+- User Registration
+- User Login
+- Dashboard
+- Comments Page
+- Admin Page
+- Session Management
+
+# Technologies Used
+
+- Python
+- Flask
+- SQLite
+- Bootstrap 5
+- bcrypt
+- HTML/CSS
+- Jinja2
+
+
+# Application Versions
+
+## 1. Vulnerable Version
+
+The vulnerable version demonstrates several security weaknesses, including:
+
+### SQL Injection
+Unsafe SQL query construction allows attackers to manipulate database queries.
+
+### Weak Password Storage
+Passwords may be stored insecurely without proper hashing.
+
+### Cross-Site Scripting (XSS)
+User input may be rendered unsafely, allowing malicious JavaScript execution.
+
+### Broken Access Control
+Unauthorized users may attempt to access restricted pages directly.
+
+### Weak Session and Communication Security
+Insufficient session protection and lack of encrypted communication may expose sensitive information.
+
+## 2. Secure Version
+
+The secure version mitigates vulnerabilities using secure development techniques.
+
+### SQL Injection Prevention
+Parameterized queries are used instead of unsafe SQL string formatting.
+
+### Secure Password Storage
+Passwords are hashed using bcrypt before being stored in the database.
+
+### XSS Prevention
+Jinja2 automatic escaping is used to safely render user input.
+
+### Role-Based Access Control (RBAC)
+Only authorized users with the admin role can access the admin page.
+
+### Session Security
+Secure session cookie settings are configured to improve session protection.
+
+### HTTPS/TLS Recommendation
+HTTPS/TLS is recommended in production environments to encrypt transmitted data.
+
+# Project Structure
+
+| File / Folder | Description |
+|---|---|
+| `app.py` | Main Flask application |
+| `templates/` | HTML templates |
+| `login.html` | Login page |
+| `register.html` | Registration page |
+| `dashboard.html` | User dashboard |
+| `comments.html` | Comments page used for XSS testing |
+| `admin.html` | Admin page protected by RBAC |
+| `users.db` | SQLite database |
+| `README.md` | Project documentation |
+
+
+# How to Run the Application
+
+## 1. Open the Project Folder
+
+Open the project folder using Visual Studio Code.
+
+## 2. Install Required Libraries
+
+Run the following command in the terminal:
+```bash
+pip install flask bcrypt
