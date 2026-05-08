@@ -46,6 +46,7 @@ def init_db():
     conn.execute("""
         CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
             text TEXT
         )
     """)
@@ -67,16 +68,15 @@ def register():
         username = request.form["username"]
 
         # ------------- 2. Weak Password Storage (hashing) -------------
-        
+
         # ------------- Weak Password Storage (BEFORE fix): -------------
         # Passwords were stored in plain text without encryption
         password = request.form["password"]
 
-        
         # ------------- Secure Password Storage code (AFTER fix): -------------
         # Passwords are hashed using bcrypt
         #password = request.form["password"].encode('utf-8')
-        #hashed_password = bcrypt.hashpw(password, bcrypt.gensalt()) 
+        #hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
         conn = get_db()
         conn.execute(
@@ -118,8 +118,6 @@ def login():
             return redirect("/dashboard")
         else:
             return render_template("logincopy.html", error="Invalid username or password")
-    
-    return render_template("logincopy.html")
 
         # ------------- SQL Injection Secure code (AFTER fix): -------------
         # Parameterized queries are used to prevent SQL Injection
@@ -130,17 +128,16 @@ def login():
         #).fetchone()
         #conn.close()
 
-
         # ------------- Secure Password Verification -------------
         # Instead of checking the password in SQL
         # The entered password is compared with the stored hashed password
-        #if user and bcrypt.checkpw(password.encode('utf-8'), user["password"]): # compare the entered password with the hashed one stored in DB
+        #if user and bcrypt.checkpw(password.encode('utf-8'), user["password"]):
             #session["username"] = user["username"]
             #return redirect("/dashboard")
         #else:
-            #return render_template("login.html", error="Invalid username or password")
+            #return render_template("logincopy.html", error="Invalid username or password")
 
-    #return render_template("login.html")
+    return render_template("logincopy.html")
 
 
 # Dashboard
@@ -156,7 +153,7 @@ def dashboard():
         (session["username"],)
     ).fetchone()
     return render_template("dashboardcopy.html", user=user)
-    
+
 
 # ------------- 3. Cross-Site Scripting (XSS)-------------
 
@@ -178,8 +175,8 @@ def comments():
 
         conn = get_db()
         conn.execute(
-            "INSERT INTO comments (text) VALUES (?)",
-            (comment,)
+            "INSERT INTO comments (username, text) VALUES (?, ?)",
+            (session["username"], comment)
         )
         conn.commit()
         conn.close()
@@ -201,15 +198,26 @@ def admin():
         "SELECT * FROM users WHERE username=?",
         (session["username"],)
     ).fetchone()
+
+    # ------------- 4. Access Control -------------
+
+    # ------------- Access Control Vulnerable code (BEFORE fix): -------------
+    # No role check is performed — any logged-in user can access the admin page
+
+    users = conn.execute("SELECT id, username, role FROM users").fetchall()
     conn.close()
-# remove acess control
+
+    return render_template("admincopy.html", users=users)
+
+    # ------------- Access Control Secure code (AFTER fix): -------------
+    # Role-based access control (RBAC) is enforced
+    # Only users with the 'admin' role are allowed to proceed
     #if user["role"] != "admin":
         #return "Access denied. Admins only."
+    #return render_template("admincopy.html", users=users)
 
-    return render_template("admincopy.html")
+
 # Logout
-
-
 @app.route("/logout")
 def logout():
     session.clear()
