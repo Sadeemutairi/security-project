@@ -15,18 +15,18 @@ The application includes:
 - User Registration
 - User Login
 - Dashboard
-- Comments Page
 - Admin Page
+- Comments Page
 - Session Management
 
 # Technologies Used
 
 - Python
 - Flask
-- SQLite
-- Bootstrap 5
-- bcrypt
 - HTML/CSS
+- Bootstrap 5
+- SQLite
+- bcrypt
 - Jinja2
 
 
