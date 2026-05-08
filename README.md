@@ -352,6 +352,7 @@ Access denied. Admins only.
 - Bootstrap Documentation: https://getbootstrap.com/
 - bcrypt Documentation: https://pypi.org/project/bcrypt/
 - SQLite Documentation: https://www.sqlite.org/
+- OWASP Top 10: https://owasp.org/Top10/2021/
 
 ---
 
