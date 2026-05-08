@@ -57,18 +57,16 @@
   </style>
 </head>
 <body>
+<!-- Admin only page - access controlled by Flask route -->
 <div class="container d-flex justify-content-center align-items-center vh-100">
   <div class="card-custom shadow-lg border-0 text-center">
-
     <div class="panel-title mb-1"> Admin Control Panel</div>
     <div class="text-muted small mb-4" style="font-size: 12px;">Secure Area</div>
-
     <div class="welcome-msg mb-4 text-center">
     Only admin users can access this page
 </div>
-
-
     <h6 class="text-start fw-bold mb-3" style="color: #444;">Registered Users</h6>
+    <!-- Loop through all registered users passed from Flask -->
     <table class="table table-bordered table-hover mb-4">
       <thead>
         <tr>
@@ -83,6 +81,7 @@
           <td>{{ u["id"] }}</td>
           <td>{{ u["username"] }}</td>
           <td>
+            <!-- Badge color differs by role: blue for admin, grey for user -->
             {% if u["role"] == "admin" %}
               <span class="badge bg-primary">admin</span>
             {% else %}
@@ -93,9 +92,7 @@
         {% endfor %}
       </tbody>
     </table>
-
     <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
-
   </div>
 </div>
 </body>
