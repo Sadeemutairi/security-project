@@ -36,7 +36,7 @@
       {% for c in comments %}
         <li class="comment-item">
           <span style="font-size:12px; font-weight:600; color:#534AB7;">{{ c["username"] }}</span>
-          <!-- vulnerable to xss -->
+          <!-- vulnerable to xss: |safe renders raw HTML as-is -->
           <span class="text-muted"> {{ c["text"]|safe }}</span>
           <!-- fixed version -->
           <!-- <span class="text-muted"> {{ c["text"] }}</span> -->
