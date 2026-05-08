@@ -21,7 +21,7 @@ app.secret_key = os.urandom(24)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 # Use True only when running with HTTPS
-app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_SECURE"] = True
 
 
 # Connect to database
@@ -46,6 +46,7 @@ def init_db():
     conn.execute("""
         CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
             text TEXT
         )
     """)
@@ -75,6 +76,8 @@ def register():
         
         # ------------- Secure Password Storage code (AFTER fix): -------------
         # Passwords are hashed using bcrypt
+        # This prevents storing plain text passwords which is insecure
+        # Even if the database is leaked, attackers cannot easily recover passwords
         password = request.form["password"].encode('utf-8')
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt()) 
 
@@ -169,8 +172,8 @@ def comments():
 
         conn = get_db()
         conn.execute(
-            "INSERT INTO comments (text) VALUES (?)",
-            (comment,)
+            "INSERT INTO comments (username, text) VALUES (?, ?)",
+            (session["username"], comment)
         )
         conn.commit()
         conn.close()
@@ -187,20 +190,33 @@ def admin():
     if "username" not in session:
         return redirect("/login")
 
+    # ------------- 4. Access Control -------------
+
+    # ------------- Access Control Vulnerable code (BEFORE fix): -------------
+    # No role check is performed — any logged-in user can access the admin page
+    # return render_template("admin.html")
+
+    # ------------- Access Control Secure code (AFTER fix): -------------
+    # Role-based access control (RBAC) is enforced
+    # Only users with the 'admin' role are allowed to proceed
     conn = get_db()
     user = conn.execute(
         "SELECT * FROM users WHERE username=?",
         (session["username"],)
     ).fetchone()
-    conn.close()
 
     if user["role"] != "admin":
+        conn.close()
         return "Access denied. Admins only."
 
-    return render_template("admin.html")
+    # Fetch all users to display in admin panel
+    users = conn.execute("SELECT id, username, role FROM users").fetchall()
+    conn.close()
+
+    return render_template("admin.html", users=users)
+
+
 # Logout
-
-
 @app.route("/logout")
 def logout():
     session.clear()
@@ -210,4 +226,5 @@ def logout():
 # Run app
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    # Change 5000 to 5001
+    app.run(debug=True, port=5001, ssl_context=('cert.pem', 'key.pem'))  # self-signed cert (SSL)
