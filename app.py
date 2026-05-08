@@ -76,6 +76,8 @@ def register():
         
         # ------------- Secure Password Storage code (AFTER fix): -------------
         # Passwords are hashed using bcrypt
+        # This prevents storing plain text passwords which is insecure
+        # Even if the database is leaked, attackers cannot easily recover passwords
         password = request.form["password"].encode('utf-8')
         hashed_password = bcrypt.hashpw(password, bcrypt.gensalt()) 
 
