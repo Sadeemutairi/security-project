@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin</title>
+  <title>Comments</title>
 </head>
 <body>
 
-<h2>Admin Page</h2>
-<p>Welcome Admin. Only admin users can access this page.</p>
+<h2>Comments Page</h2>
+
+<form method="POST">
+  <input name="comment" placeholder="Write a comment">
+  <button type="submit">Add Comment</button>
+</form>
+
+<hr>
+
+<ul>
+{% for c in comments %}
+ <li>{{ c["text"]}}</li>
+ <!-- vulnerable to xss  --> 
+ <!-- <li>{{ c["text"]|safe}}</li> --> 
+{% endfor %}
+</ul>
 
 <a href="/dashboard">Back to Dashboard</a>
 
