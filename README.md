@@ -111,7 +111,18 @@ pip install flask bcrypt
 ---
 
 ## 3. Run the Application
+The application consists of two versions. Since Flask specifically requires a folder named `templates` to render HTML pages, you must ensure the correct folder is renamed before running the script.
 
+### A. To run the Vulnerable Version:
+1. Rename the folder `vulnerablecode` to **`templates`**.
+2. Run the vulnerable script:
+   ```bash
+   python vulnerable.py
+
+### B. To run the Secure Version:
+1. For the secure version, use the main folder named **`templates`** that we have provided in the project files.
+2. If you previously renamed the vulnerable folder to `templates`, make sure to change its name first to avoid conflicts.
+3. Run the secure script:
 ```bash
 python app.py
 ```
