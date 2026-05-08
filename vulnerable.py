@@ -26,7 +26,7 @@ app.secret_key = "key123"
 
 # Connect to database
 def get_db():
-    conn = sqlite3.connect("users.db")
+    conn = sqlite3.connect("vulnerable.db")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -89,7 +89,7 @@ def register():
 
         return redirect("/login")
 
-    return render_template("registercopy.html")
+    return render_template("vulnerablecode/registercopy.html") # NEW
 
 
 # Login
@@ -117,7 +117,7 @@ def login():
             session["username"] = user["username"]
             return redirect("/dashboard")
         else:
-            return render_template("logincopy.html", error="Invalid username or password")
+            return render_template("vulnerablecode/logincopy.html", error="Invalid username or password") # NEW
 
         # ------------- SQL Injection Secure code (AFTER fix): -------------
         # Parameterized queries are used to prevent SQL Injection
@@ -137,7 +137,7 @@ def login():
         #else:
             #return render_template("logincopy.html", error="Invalid username or password")
 
-    return render_template("logincopy.html")
+    return render_template("vulnerablecode/logincopy.html") # NEW
 
 
 # Dashboard
@@ -152,7 +152,7 @@ def dashboard():
         "SELECT * FROM users WHERE username=?",
         (session["username"],)
     ).fetchone()
-    return render_template("dashboardcopy.html", user=user)
+    return render_template("vulnerablecode/dashboardcopy.html", user=user) # NEW
 
 
 # ------------- 3. Cross-Site Scripting (XSS)-------------
@@ -185,7 +185,7 @@ def comments():
     comments = conn.execute("SELECT * FROM comments").fetchall()
     conn.close()
 
-    return render_template("commentscopy.html", comments=comments)
+    return render_template("vulnerablecode/commentscopy.html", comments=comments) # NEW
 
 
 @app.route("/admin")
@@ -207,7 +207,7 @@ def admin():
     users = conn.execute("SELECT id, username, role FROM users").fetchall()
     conn.close()
 
-    return render_template("admincopy.html", users=users)
+    return render_template("vulnerablecode/admincopy.html", users=users) # NEW 
 
     # ------------- Access Control Secure code (AFTER fix): -------------
     # Role-based access control (RBAC) is enforced
