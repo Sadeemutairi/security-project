@@ -89,7 +89,7 @@ def register():
 
         return redirect("/login")
 
-    return render_template("vulnerablecode/registercopy.html") # NEW
+    return render_template("vulnerablecode/registercopy.html") 
 
 
 # Login
@@ -117,7 +117,7 @@ def login():
             session["username"] = user["username"]
             return redirect("/dashboard")
         else:
-            return render_template("vulnerablecode/logincopy.html", error="Invalid username or password") # NEW
+            return render_template("vulnerablecode/logincopy.html", error="Invalid username or password") 
 
         # ------------- SQL Injection Secure code (AFTER fix): -------------
         # Parameterized queries are used to prevent SQL Injection
@@ -137,7 +137,7 @@ def login():
         #else:
             #return render_template("logincopy.html", error="Invalid username or password")
 
-    return render_template("vulnerablecode/logincopy.html") # NEW
+    return render_template("vulnerablecode/logincopy.html") 
 
 
 # Dashboard
@@ -152,7 +152,7 @@ def dashboard():
         "SELECT * FROM users WHERE username=?",
         (session["username"],)
     ).fetchone()
-    return render_template("vulnerablecode/dashboardcopy.html", user=user) # NEW
+    return render_template("vulnerablecode/dashboardcopy.html", user=user) 
 
 
 # ------------- 3. Cross-Site Scripting (XSS)-------------
@@ -185,7 +185,7 @@ def comments():
     comments = conn.execute("SELECT * FROM comments").fetchall()
     conn.close()
 
-    return render_template("vulnerablecode/commentscopy.html", comments=comments) # NEW
+    return render_template("vulnerablecode/commentscopy.html", comments=comments) 
 
 
 @app.route("/admin")
@@ -207,7 +207,7 @@ def admin():
     users = conn.execute("SELECT id, username, role FROM users").fetchall()
     conn.close()
 
-    return render_template("vulnerablecode/admincopy.html", users=users) # NEW 
+    return render_template("vulnerablecode/admincopy.html", users=users)
 
     # ------------- Access Control Secure code (AFTER fix): -------------
     # Role-based access control (RBAC) is enforced
