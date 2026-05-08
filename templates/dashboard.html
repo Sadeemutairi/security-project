@@ -62,7 +62,8 @@
     <div class="role-badge mb-4">
       Role: <strong>{{ user["role"] }}</strong>
     </div>
-
+    
+<!-- Admin panel link only visible to admin users -->
     {% if user["role"] == "admin" %}
     <div class="admin-box mb-4">
       <a href="/admin" class="btn btn-primary btn-sm w-100" style="background:#534AB7; border:none; border-radius:8px;">View Admin Panel</a>
