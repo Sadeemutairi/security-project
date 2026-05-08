@@ -92,8 +92,8 @@ HTTPS/TLS is recommended in production environments to encrypt transmitted data.
 **Automatic Initialization:** The database `users.db` is automatically generated the moment the `app.py` script is executed for the first time. The `init_db()` function checks if the required tables (users and comments) exist and creates them if they are missing, ensuring the application is ready for immediate use.
 
 ## User Roles & Access Control
-**Role Assignment:** By default, every new account registered through the `/register` page is assigned the role of **'user'**. 
-**Admin Access:** To grant administrative privileges, the role must be manually updated to **'admin'** directly within the database (e.g., using DB Browser for SQLite). This manual process acts as an additional security measure, ensuring no unauthorized user can elevate their own permissions through the web interface.
+* **Role Assignment:** By default, every new account registered through the `/register` page is assigned the role of **'user'**. 
+* **Admin Access:** To grant administrative privileges, the role must be manually updated to **'admin'** directly within the database (e.g., using DB Browser for SQLite). This manual process acts as an additional security measure, ensuring no unauthorized user can elevate their own permissions through the web interface.
 
 ## Steps to Run the Application:
 ## 1. Open the Project Folder
