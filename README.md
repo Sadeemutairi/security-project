@@ -93,7 +93,7 @@ HTTPS/TLS is recommended in production environments to encrypt transmitted data.
 
 ## User Roles & Access Control
 * **Role Assignment:** By default, every new account registered through the `/register` page is assigned the role of **'user'**. 
-* **Admin Access:** To grant administrative privileges, the role must be manually updated to **'admin'** directly within the database (e.g., using DB Browser for SQLite). This manual process acts as an additional security measure, ensuring no unauthorized user can elevate their own permissions through the web interface.
+* **Admin Access:** To grant administrative privileges, the role must be manually updated to **'admin'** directly within the database using the SQLite Explorer extension in VS Code. This manual process acts as an additional security measure, ensuring no unauthorized user can elevate their own permissions through the web interface.
 
 ## Steps to Run the Application:
 ## 1. Open the Project Folder
