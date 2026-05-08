@@ -253,7 +253,7 @@ Access denied. Admins only.
 
 # Future Improvements
 
-- Enable HTTPS in deployment environments
+- Implement Rate Limiting
 - Improve password complexity validation
 - Add logging and monitoring features
 - Implement multi-factor authentication (MFA)
