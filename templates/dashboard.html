@@ -2,71 +2,83 @@
 <html>
 <head>
   <title>Dashboard</title>
-
-  <!-- Bootstrap (direct access) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       background: linear-gradient(to right, #dde5f0, #f2f6fb);
+      min-height: 100vh;
     }
-
     .card-custom {
-      width: 420px;
+      width: 450px;
       border-radius: 15px;
       padding: 30px;
+      background: white;
     }
-
-    /* Welcome + username */
     .welcome-text {
       font-size: 26px;
       font-weight: 700;
     }
-
-    /* Gradient username */
     .username-gradient {
       background: linear-gradient(to right, #8e2de2, #ff4ecd);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 700;
     }
-
-    /* Role badge */
     .role-badge {
       background: #f1f1f1;
       color: #556;
-      font-size: 15px;
-      padding: 6px 14px;
+      font-size: 14px;
+      padding: 4px 12px;
       border-radius: 20px;
-      display: inline-block; 
+      display: inline-block;
+    }
+    .comments-section {
+      text-align: left;
+      background: #fdfdfd;
+      border-radius: 10px;
+      padding: 15px;
+      border: 1px solid #eee;
+    }
+    .admin-box {
+      border-radius: 12px;
+      background: #EEEDFE;
+      border: 1px solid #c5c2f5;
+      padding: 15px;
+      margin-bottom: 1rem;
+    }
+    .admin-box h6 {
+      color: #3C3489;
+      font-weight: 700;
     }
   </style>
 </head>
-
 <body>
-
 <div class="container d-flex justify-content-center align-items-center vh-100">
-
   <div class="card card-custom shadow-lg border-0 text-center">
 
-    <!-- Welcome + Username -->
-    <div class="welcome-text mb-3">
-      Welcome, <span class="username-gradient">{{ user["username"] }}</span> 
+    <div class="welcome-text mb-2">
+      Welcome, <span class="username-gradient">{{ user["username"] }}</span>
     </div>
-
-    <!-- Role -->
     <div class="role-badge mb-4">
-      {{ user["role"] }}
+      Role: <strong>{{ user["role"] }}</strong>
     </div>
 
-    <!-- Logout -->
-    <a href="/logout" class="btn btn-dark w-100">
-      Logout
+    {% if user["role"] == "admin" %}
+    <div class="admin-box mb-4">
+      <a href="/admin" class="btn btn-primary btn-sm w-100" style="background:#534AB7; border:none; border-radius:8px;">View Admin Panel</a>
+    </div>
+    {% endif %}
+
+    <div class="comments-section mb-4">
+      <h6 class="mb-3" style="font-weight: 700; color: #444;">Community Comments</h6>
+      <a href="/comments" class="btn btn-sm w-100" style="background:#EEEDFE; color:#3C3489; border:1px solid #c5c2f5; border-radius:8px;">💬 View Comments</a>
+    </div>
+
+    <a href="/logout" class="text-decoration-none small fw-bold px-4 py-2" style="color:#E24B4A; border:1px solid #E24B4A; border-radius:20px;">
+      Logout from Secure Session
     </a>
 
   </div>
-
 </div>
-
 </body>
 </html>
